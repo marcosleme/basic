@@ -16,6 +16,7 @@ class DoacaoController extends \yii\web\Controller
 		$model = new Doador();
 		
 		if ($model->load(Yii::$app->request->post()) && $model->validateDonation() && $model->save()) {
+			Yii::$app->session->setFlash('success', "Registro realizado com sucesso.");
 			return $this->render('create', [
 				'model' => $model,
 			]);

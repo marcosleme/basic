@@ -50,11 +50,6 @@ class Doador extends \yii\db\ActiveRecord
             [['email'], 'string', 'max' => 30],
             [['intervalo_doacao', 'forma_pagamento'], 'string', 'max' => 10],
             [['numero_cartao'], 'string', 'max' => 20],
-			//[['telefone'], 'match' ,'pattern'=>'/\(\ds{2}\)\ \d{7}(\d|\ ){2}/', 'message'=> 'Telefone deve estar no formato (99) 999999999.'],
-			//[['cpf'], 'match' ,'pattern'=>'/\d{3}\.\d{3}\.\d{3}\.\-\d{2}/', 'message'=> 'CPF deve estar no formato 999.999.999-99.'],
-			//[['numero_cartao'], 'match' ,'pattern'=>'/((\d){16}{0,1}/', 'message'=> 'Insira apenas numeros.'],
-			//[['telefone'], 'match' ,'pattern'=>'/\d{10,13}/', 'message'=> 'Insira apenas numeros.'],
-			//[['numero_cartao'], 'match' ,'pattern'=>'/(\d){0,10,12}/', 'message'=> 'Insira apenas numeros.'],
         ];
     }
 
@@ -109,10 +104,10 @@ class Doador extends \yii\db\ActiveRecord
 			
 			switch ($this->forma_pagamento) {
 				case 1:
-					$this->bandeira_cartao = 'debito';
+					$this->forma_pagamento = 'debito';
 					break;
 				case 2:
-					$this->bandeira_cartao = 'credito';
+					$this->forma_pagamento = 'credito';
 					break;
 			}
 			
@@ -200,6 +195,7 @@ class Doador extends \yii\db\ActiveRecord
 		} else {
 			$creditCard = mb_substr($this->numero_cartao, 0, 6) . '******' . mb_substr($this->numero_cartao, 12, 16);//Variavel recebe os primeiros 6 digitos e ultimos 4 do cartao
 			if(Doador::findOne(['numero_cartao' => $creditCard])){ //Busca no banco de dados o valor do cartao de credito
+				Yii::$app->session->setFlash('error', "Não foi possível cadastrar esse número de cartão, entre em contato com o seu supervisor..");
 				$this->addError('numero_cartao', 'Não foi possível cadastrar esse número de cartão, entre em contato com o seu supervisor.');
 				return false;
 			} else {
